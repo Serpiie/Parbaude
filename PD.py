@@ -37,19 +37,19 @@ class Apgerbs(Produkts):
     def __init__(self, nosaukums, cena, apraksts,izmers):
         super().__init__(nosaukums, cena, apraksts)
         self.izmers = izmers
-    def get_jauda(self):
+    def get_izmers(self):
         return self.izmers
-    def set_jauda(self, n):
+    def set_izmers(self, n):
         self.izmers = n
 
 class Gramata(Produkts):  
-    def __init__(self, nosaukums, cena, apraksts,lapaspuses):
+    def __init__(self, nosaukums, cena, apraksts,lappuses):
         super().__init__(nosaukums, cena, apraksts)
-        self.lapaspuses = lapaspuses
-    def get_jauda(self):
-        return self.lapaspuses
-    def set_jauda(self, n):
-        self.lapaspuses = n
+        self.lappuses = lappuses
+    def get_lappuses(self):
+        return self.lappuses
+    def set_lappuses(self, n):
+        self.lappuses = n
 
 
 class Grozs:
@@ -75,9 +75,11 @@ class Grozs:
             if p == prece:
                 s = s-1
                 self.saturs[i] = (p,s)
-                k = (p,s)
+                
                 if s == 0:
+                   k = (p,s)
                    self.saturs.remove(k) 
+                   break
         
 
 
@@ -95,7 +97,7 @@ class Grozs:
 
                 if self.saturs[i][1] > 0:
                     
-                    print("{}: nosaukums: {} cena: {} apraksts: {}".format(count,self.saturs[i][0].nosaukums, self.saturs[i][0].cena,self.saturs[i][0].apraksts))
+                    print("{}: nosaukums: {} cena: {} apraksts: {}".format(count,self.saturs[i][0].get_nosaukums(), self.saturs[i][0].get_cena(),self.saturs[i][0].get_apraksts()))
                     count = count +  1
 
 
@@ -108,7 +110,7 @@ class Grozs:
             return total
         if kurss == 'EUR':
             vertiba = vertiba_sum(self)
-            print('Kopējā vērtība: {}'.format(vertiba))
+            print('Kopējā vērtība: {}'.format(vertiba)+'EUR')
         else:
             api = 'http://open.er-api.com/v6/latest/EUR'
             response = requests.get(api)
@@ -119,7 +121,7 @@ class Grozs:
                 data = json.loads(data)
                 reiznatajs = data['rates'][kurss]
                 vertiba = vertiba_sum(self)
-                print('Kopējā vērtība: {}'.format(vertiba*reiznatajs))
+                print('Kopējā vērtība: {}'.format(vertiba*reiznatajs)+ kurss)
             else:
                 # Request failed
                 print("Neizdevās savienoties ar serveri:", response.status_code)
@@ -130,10 +132,13 @@ def main():
     g = Grozs()
     tehnika = Elektronika('iphone',500,'no Apple',1000)
     kanceleja = Gramata('Sola',5,'no G. Janovska',300)
-    virsdrebes = Apgerbs('t-krekls',10,'no Pakistanas','XL')
+    virsdrebes = Apgerbs('t-krekls',130,'no Pakistanas','XL')
+
+    print(virsdrebes.get_izmers())
     g.pievienot(tehnika)
-    g.pievienot(kanceleja)
+    g.pievienot(kanceleja,100)
     g.pievienot(virsdrebes)
+    g.kopeja_vertiba('USD')
     g.kopums()
     g.dzest(tehnika)
     g.kopums()
